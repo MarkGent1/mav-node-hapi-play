@@ -4,6 +4,7 @@ import Hapi from '@hapi/hapi'
 import { config } from './config.js'
 import { defaultRoutes } from './plugins/router.js'
 import { failAction } from './common/fail-action.js'
+import { mongoDb } from './common/mongo/mongodb.js'
 import { requestLogger } from './common/logging/request-logger.js'
 import { pulse } from './common/pulse.js'
 
@@ -42,7 +43,15 @@ async function createServer() {
     }
   })
 
-  await server.register([defaultRoutes, pulse, requestLogger])
+  await server.register([
+    defaultRoutes,
+    pulse,
+    requestLogger,
+    {
+      plugin: mongoDb,
+      options: config.get('mongo')
+    }
+  ])
 
   return server
 }
